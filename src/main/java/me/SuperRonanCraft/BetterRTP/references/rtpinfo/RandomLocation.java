@@ -27,26 +27,42 @@ public class RandomLocation {
     private static Location generateSquare(RTPWorld rtpWorld) {
         //Generate a random X and Z based off the quadrant selected
         int min = rtpWorld.getMinRadius();
-        int max = rtpWorld.getMaxRadius() - min;
-        int x, z;
-        int quadrant = new Random().nextInt(4);
+        int max = rtpWorld.getMaxRadius();
+        int x,z;
+        int quadrant;
+
         try {
+            quadrant = new Random().nextInt(4);
+            
+            // generate random locations in the right range
+            x = new Random().nextInt(max);
+            z = new Random().nextInt(max);
+        
+            while (x < min && z < min) {
+                //In restricted region
+                if (quadrant < 2) { //50%
+                     x = new Random().nextInt(max);
+                } else {
+                    z = new Random().nextInt(max);
+                }
+            }
+
             switch (quadrant) {
                 case 0: // Positive X and Z
-                    x = new Random().nextInt(max) + min;
-                    z = new Random().nextInt(max) + min;
+                    x = x;
+                    z = z;
                     break;
                 case 1: // Negative X and Z
-                    x = -new Random().nextInt(max) - min;
-                    z = -(new Random().nextInt(max) + min);
+                    x = -x;
+                    z = z;
                     break;
-                case 2: // Negative X and Positive Z
-                    x = -new Random().nextInt(max) - min;
-                    z = new Random().nextInt(max) + min;
+                case 2: // Positive X and Negative Z
+                    x = x;
+                    z = -z;
                     break;
-                default: // Positive X and Negative Z
-                    x = new Random().nextInt(max) + min;
-                    z = -(new Random().nextInt(max) + min);
+                default: // Negative X and Negative Z
+                    x = -x;
+                    z = -z;
                     break;
             }
         } catch (IllegalArgumentException e) {
